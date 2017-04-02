@@ -4,10 +4,13 @@ import (
 	"log"
 	"net/http"
 
+	"flag"
+
 	"github.com/golang/glog"
 )
 
 func main() {
+	flag.Parse()
 	r := NewRouter()
 
 	glog.Infoln("Start server")
