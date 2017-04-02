@@ -2,9 +2,9 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
+	"github.com/golang/glog"
 	resty "gopkg.in/resty.v0"
 )
 
@@ -23,8 +23,12 @@ type (
 )
 
 func checkAuth(w http.ResponseWriter, req *http.Request) {
+	glog.Infoln("Process Auth request")
+	glog.Infoln(req)
+
 	var payload authPayload
 	var result ldapResponse
+
 	json.NewDecoder(req.Body).Decode(&payload)
 	_, err := resty.R().
 		SetQueryParams(map[string]string{
@@ -40,7 +44,7 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 		Post("https://torus-45:jyqgjfawTPj5PrTDPEUI@arel.eisti.fr/oauth/token")
 
 	if err != nil {
-		fmt.Println(err.Error())
+		glog.Errorln(err.Error())
 	}
 
 	json.NewEncoder(w).Encode(result)
