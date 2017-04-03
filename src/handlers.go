@@ -64,10 +64,12 @@ func getListOfFile(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	var user string
 
-	if params["id"] == "1" {
-		user = "paul"
-	} else {
-		user = "thomas"
+	user = redisClient.GET(params["id"])
+
+	if user == "" {
+		glog.Errorln("User not found")
+		http.Error(w, "User not found", 500)
+		return
 	}
 
 	searchDir := filepath.Join(*basePath, "/", user)
