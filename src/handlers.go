@@ -60,7 +60,7 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), 500)
 	}
 
-	if result.Error != "" {
+	if result.AccessToken != "" {
 		redisClient.SET(result.AccessToken, payload.Username)
 	}
 
