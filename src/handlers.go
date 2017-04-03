@@ -4,7 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"path/filepath"
+
+	"os"
+
 	"github.com/golang/glog"
+	"github.com/gorilla/mux"
 	resty "gopkg.in/resty.v0"
 )
 
@@ -45,7 +50,46 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 
 	if err != nil {
 		glog.Errorln(err.Error())
+		http.Error(w, err.Error(), 500)
 	}
 
+	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(result)
+}
+
+func getListOfFile(w http.ResponseWriter, req *http.Request) {
+	glog.Infoln("Process ListOfFile request")
+	glog.Infoln(req)
+
+	params := mux.Vars(req)
+	var user string
+
+	if params["id"] == "1" {
+		user = "paul"
+	} else {
+		user = "thomas"
+	}
+
+	searchDir := filepath.Join(*basePath, "/", user)
+	fileList := []string{}
+	err := filepath.Walk(searchDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			fileList = append(fileList, path)
+		}
+		return nil
+	})
+
+	if err != nil {
+		glog.Errorln(err.Error())
+		http.Error(w, err.Error(), 500)
+	}
+
+	glog.Infoln(fileList)
+
+	w.Header().Add("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(fileList)
+
 }
