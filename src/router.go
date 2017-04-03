@@ -9,7 +9,7 @@ func NewRouter() *mux.Router {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/auth", checkAuth).Methods("POST")
-	router.HandleFunc("/list/{id}", getListOfFile).Methods("GET")
-	router.HandleFunc("/hdfsList/{id}", getFiles).Methods("GET")
+	router.HandleFunc("/hdfs/{id}", getFiles).Methods("GET")
+	router.HandleFunc("/hdfs/{id}/{file}", removeFile).Methods("DELETE")
 	return router
 }

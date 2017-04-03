@@ -107,13 +107,43 @@ func getFiles(w http.ResponseWriter, req *http.Request) {
 		}
 		result = append(result, tmp)
 	}
+	client.Close()
 
 	w.Header().Add("Content-Type", "application/json")
-	// w.Write(result)
 	json.NewEncoder(w).Encode(result)
 
 }
 
+func removeFile(w http.ResponseWriter, req *http.Request) {
+	client, err := hdfs.New(*baseHost + ":8020")
+
+	if err != nil {
+		glog.Errorln(err.Error())
+	}
+
+	params := mux.Vars(req)
+
+	user := redisClient.GET(params["id"])
+
+	if user == "" {
+		glog.Errorln("User not found")
+		http.Error(w, "User not found", 500)
+		return
+	}
+
+	path := "/user/admin"
+	searchFile := filepath.Join(path, "/", user, "/", params["file"])
+
+	if e := client.Remove(searchFile); e != nil {
+		glog.Errorln(e.Error())
+		http.Error(w, "Cannot remove this file", 500)
+		return
+	}
+
+	client.Close()
+}
+
+//LIST FILE ON DISK (OBSOLETE)
 func getListOfFile(w http.ResponseWriter, req *http.Request) {
 	glog.Infoln("Process ListOfFile request")
 	glog.Infoln(req)
