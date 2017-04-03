@@ -28,9 +28,9 @@ type (
 	}
 
 	hdfsResponse struct {
-		Date string
-		Name string
-		Size int64
+		LastModified string `json:"last_modified"`
+		Name         string `json:"name"`
+		Size         int64  `json:"size"`
 	}
 )
 
@@ -101,9 +101,9 @@ func getFiles(w http.ResponseWriter, req *http.Request) {
 		name := info.Name()
 
 		tmp := &hdfsResponse{
-			Date: date,
-			Size: size,
-			Name: name,
+			LastModified: date,
+			Size:         size,
+			Name:         name,
 		}
 		result = append(result, tmp)
 	}
