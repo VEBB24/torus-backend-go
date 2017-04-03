@@ -12,17 +12,18 @@ import (
 )
 
 var basePath *string
+var baseHost *string
 var redisClient *Redis
 
 func main() {
-	host := flag.String("host", "0.0.0.0", "a valid host")
+	baseHost = flag.String("host", "127.0.0.1", "a valid host")
 	port := flag.String("port", "12345", "a valid port")
 	path := flag.String("basePath", ".", "a valid path")
 	flag.Parse()
 	tmp, _ := filepath.Abs(*path)
 	basePath = &tmp
-	redisClient = RedisFactory(*host)
+	redisClient = RedisFactory(*baseHost)
 	r := NewRouter()
 	glog.Infoln("Start server")
-	log.Fatal(http.ListenAndServe(*host+":"+*port, r))
+	log.Fatal(http.ListenAndServe(*baseHost+":"+*port, r))
 }

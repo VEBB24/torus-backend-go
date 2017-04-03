@@ -8,6 +8,7 @@ import (
 
 	"os"
 
+	"github.com/colinmarc/hdfs"
 	"github.com/golang/glog"
 	"github.com/gorilla/mux"
 	resty "gopkg.in/resty.v0"
@@ -24,6 +25,12 @@ type (
 		RefreshToken     string `json:"refresh_token,omitempty"`
 		Error            string `json:"error,omitempty"`
 		ErrorDescription string `json:"error_description,omitempty"`
+	}
+
+	hdfsResponse struct {
+		Date string
+		Name string
+		Size int64
 	}
 )
 
@@ -53,8 +60,58 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), 500)
 	}
 
+	if result.Error != "" {
+		redisClient.SET(result.AccessToken, payload.Username)
+	}
+
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(result)
+}
+
+func getFiles(w http.ResponseWriter, req *http.Request) {
+	client, err := hdfs.New(*baseHost + ":8020")
+
+	if err != nil {
+		glog.Errorln(err.Error())
+	}
+
+	params := mux.Vars(req)
+	var user string
+
+	user = redisClient.GET(params["id"])
+
+	if user == "" {
+		glog.Errorln("User not found")
+		http.Error(w, "User not found", 500)
+		return
+	}
+	path := "/user/admin"
+	searchDir := filepath.Join(path, "/", user)
+	array, e := client.ReadDir(searchDir)
+
+	if e != nil {
+		glog.Errorln(e.Error())
+		http.Error(w, e.Error(), 500)
+		return
+	}
+	var result []*hdfsResponse
+	for _, info := range array {
+		date := info.ModTime().UTC().Format("02/01/2006 15:04:05 UTC")
+		size := info.Size()
+		name := info.Name()
+
+		tmp := &hdfsResponse{
+			Date: date,
+			Size: size,
+			Name: name,
+		}
+		result = append(result, tmp)
+	}
+
+	w.Header().Add("Content-Type", "application/json")
+	// w.Write(result)
+	json.NewEncoder(w).Encode(result)
+
 }
 
 func getListOfFile(w http.ResponseWriter, req *http.Request) {
