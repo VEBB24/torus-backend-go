@@ -28,6 +28,7 @@ func NewRouter() *mux.Router {
 	router.HandleFunc("/auth", checkAuth).Methods("POST")
 	router.HandleFunc("/hdfs/{id}", getFiles).Methods("GET")
 	router.HandleFunc("/hdfs/{id}/{file}", removeFile).Methods("DELETE")
+	router.HandleFunc("/hdfs/{id}", renameFile).Methods("PUT")
 	router.Handle("/streaming/{id}", broker).Methods("GET")
 
 	go func() {

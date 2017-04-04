@@ -32,6 +32,11 @@ type (
 		Name         string `json:"name"`
 		Size         int64  `json:"size"`
 	}
+
+	hdfsPayload struct {
+		Previous string `json:"previous"`
+		Next     string `json:"next"`
+	}
 )
 
 func checkAuth(w http.ResponseWriter, req *http.Request) {
@@ -114,6 +119,35 @@ func getFiles(w http.ResponseWriter, req *http.Request) {
 
 }
 
+func renameFile(w http.ResponseWriter, req *http.Request) {
+	client, err := hdfs.New(*baseHost + ":8020")
+	if err != nil {
+		glog.Errorln(err.Error())
+	}
+	var payload hdfsPayload
+	json.NewDecoder(req.Body).Decode(&payload)
+
+	params := mux.Vars(req)
+	user := redisClient.GET(params["id"])
+
+	if user == "" {
+		glog.Errorln("User not found")
+		http.Error(w, "User not found", 500)
+		return
+	}
+
+	path := "/user/admin"
+	previousFile := filepath.Join(path, "/", user, "/", payload.Previous)
+	nextFile := filepath.Join(path, "/", user, "/", payload.Next)
+
+	if e := client.Rename(previousFile, nextFile); e != nil {
+		glog.Errorln(e.Error())
+		http.Error(w, e.Error(), 500)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+}
+
 func removeFile(w http.ResponseWriter, req *http.Request) {
 	client, err := hdfs.New(*baseHost + ":8020")
 
@@ -141,6 +175,7 @@ func removeFile(w http.ResponseWriter, req *http.Request) {
 	}
 
 	client.Close()
+	w.WriteHeader(http.StatusOK)
 }
 
 //LIST FILE ON DISK (OBSOLETE)
