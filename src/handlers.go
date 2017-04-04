@@ -74,7 +74,7 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 }
 
 func getFiles(w http.ResponseWriter, req *http.Request) {
-	client, err := hdfs.New(*baseHost + ":8020")
+	client, err := hdfs.New(*baseHdfs + ":8020")
 
 	if err != nil {
 		glog.Errorln(err.Error())
@@ -120,7 +120,7 @@ func getFiles(w http.ResponseWriter, req *http.Request) {
 }
 
 func renameFile(w http.ResponseWriter, req *http.Request) {
-	client, err := hdfs.New(*baseHost + ":8020")
+	client, err := hdfs.New(*baseHdfs + ":8020")
 	if err != nil {
 		glog.Errorln(err.Error())
 	}
@@ -149,7 +149,7 @@ func renameFile(w http.ResponseWriter, req *http.Request) {
 }
 
 func removeFile(w http.ResponseWriter, req *http.Request) {
-	client, err := hdfs.New(*baseHost + ":8020")
+	client, err := hdfs.New(*baseHdfs + ":8020")
 
 	if err != nil {
 		glog.Errorln(err.Error())

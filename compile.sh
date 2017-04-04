@@ -9,3 +9,5 @@ go get "github.com/golang/glog"
 mkdir -p build
 
 go build -o build/server src/*.go
+
+docker-compose build
