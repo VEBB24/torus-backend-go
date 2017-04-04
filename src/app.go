@@ -19,11 +19,14 @@ func main() {
 	baseHost = flag.String("host", "127.0.0.1", "a valid host")
 	port := flag.String("port", "12345", "a valid port")
 	path := flag.String("basePath", ".", "a valid path")
+
 	flag.Parse()
+
 	tmp, _ := filepath.Abs(*path)
 	basePath = &tmp
+
 	redisClient = RedisFactory(*baseHost)
-	r := NewRouter()
+
 	glog.Infoln("Start server")
-	log.Fatal(http.ListenAndServe(*baseHost+":"+*port, r))
+	log.Fatal(http.ListenAndServe(*baseHost+":"+*port, NewRouter()))
 }
