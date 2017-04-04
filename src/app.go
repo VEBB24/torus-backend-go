@@ -25,7 +25,7 @@ func main() {
 	tmp, _ := filepath.Abs(*path)
 	basePath = &tmp
 
-	redisClient = RedisFactory(*baseHost)
+	redisClient = RedisFactory(*baseHost, 10)
 
 	glog.Infoln("Start server")
 	log.Fatal(http.ListenAndServe(*baseHost+":"+*port, NewRouter()))
