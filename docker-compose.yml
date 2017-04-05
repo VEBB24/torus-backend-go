@@ -3,19 +3,8 @@ services:
   gateway:
     build: .
     environment: 
-      - HOST_REDIS=redis
-      - HOST_HDFS=namenode
-    networks: 
-      - redis
-      - hadoop
-    external_links:
-      - redis
-      - namenode
+      - HOST_REDIS=${HOST_REDIS}
+      - HOST_HDFS=${HOST_HDFS}
+    network_mode: host
     ports: 
       - "12345:12345"
-
-networks: 
-  redis:
-    external: true
-  hadoop:
-    external: true
