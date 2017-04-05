@@ -8,6 +8,8 @@ go get "github.com/golang/glog"
 
 mkdir -p build
 
+cp ../torus-upload/build/hdfs .
+
 go build -o build/server src/*.go
 
 docker-compose build

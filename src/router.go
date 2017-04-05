@@ -30,6 +30,7 @@ func NewRouter() *mux.Router {
 	router.HandleFunc("/hdfs/{id}/{file}", removeFile).Methods("DELETE")
 	router.HandleFunc("/hdfs/{id}", renameFile).Methods("PUT")
 	router.Handle("/streaming/{id}", broker).Methods("GET")
+	router.HandleFunc("/binary", getBinary).Methods("GET")
 
 	go func() {
 		for i := 0; ; i++ {

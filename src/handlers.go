@@ -178,6 +178,10 @@ func removeFile(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func getBinary(w http.ResponseWriter, req *http.Request) {
+	http.ServeFile(w, req, "hdfs")
+}
+
 //LIST FILE ON DISK (OBSOLETE)
 func getListOfFile(w http.ResponseWriter, req *http.Request) {
 	glog.Infoln("Process ListOfFile request")

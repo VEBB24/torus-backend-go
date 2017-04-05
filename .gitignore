@@ -3,6 +3,7 @@
 *.a
 *.so
 build/
+hdfs
 # Folders
 _obj
 _test
