@@ -99,7 +99,7 @@ func getFiles(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, e.Error(), 500)
 		return
 	}
-	var result []*hdfsResponse
+	result := make([]*hdfsResponse, 0)
 	for _, info := range array {
 		date := info.ModTime().UTC().Format("02/01/2006 15:04:05 UTC")
 		size := info.Size()
